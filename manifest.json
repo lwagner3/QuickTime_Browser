@@ -1,0 +1,37 @@
+{
+  "manifest_version": 2,
+  "name": "QuickTime Browser",
+  "version": "1.0",
+
+  "description": "Keeps you focoused.",
+
+  "icons": {
+    "48": "icons/icon.png"
+  },
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "QuickTimeBrowser@qtb.com",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  },
+
+  "browser_action": {
+    "default_icon": "icons/icon.png",
+    "default_title": "QuickTine Browser",
+    "default_popup": "popup/QuickTime.html"
+  },
+
+  "background":{
+    "scripts":["background.js"]
+  },
+
+  "permissions": [
+    "<all_urls>",
+    "tabs",
+    "alarms",
+    "storage"
+  ]
+}
