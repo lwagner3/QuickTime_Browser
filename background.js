@@ -1,5 +1,13 @@
 let tillNext = Math.floor(Math.random()*300)+30-1;
-console.log(tillNext);
+console.log("Next game: tillNext");
+
+browser.notifications.create({
+  type: "basic",
+  iconUrl: browser.runtime.getURL("icon.png"),
+  title: "NEW TASK",
+  message: "Open Quick-Time Browser Sidebar."
+});
+
 
 browser.alarms.create("gameTimer", {
     periodInMinutes:1/1000
@@ -14,6 +22,18 @@ browser.alarms.onAlarm.addListener((alarm)=> {
             if(tim.timer===tillNext){
                 timer=0;
 
+                //if sidebar is not open, send notification to open it on click.
+                browser.sidebarAction.isOpen({}).then((result) => {
+                    if(!result){
+                        console.log("notify");
+                        
+                    }
+                });
+
+
+                playRandom();
+
+                //next wait
                 tillNext = Math.floor(Math.random()*300)+30-1;
             } else {
                 timer=tim.timer+1;
@@ -36,3 +56,8 @@ browser.storage.local.get(["timer"], (tim) => {
         timer:0
     })
 })
+
+
+function playRandom(){
+    let games=["timedstop"];
+}

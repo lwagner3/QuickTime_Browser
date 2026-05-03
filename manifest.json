@@ -28,10 +28,17 @@
     "scripts":["background.js"]
   },
 
+  "sidebar_action": {
+    "default_title": "Quick-Time Browser",
+    "default_panel": "quicktime.html",
+    "default_icon": "icon.png"
+  },
+
   "permissions": [
     "<all_urls>",
     "tabs",
     "alarms",
-    "storage"
+    "storage",
+    "notifications"
   ]
 }
