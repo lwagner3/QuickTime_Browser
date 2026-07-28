@@ -1,63 +1,69 @@
-let tillNext = Math.floor(Math.random()*300)+30-1;
-console.log("Next game: tillNext");
+//rand(30-300) * 10
+// let tillNext = 10*(Math.floor(Math.random()*270)+3);
+let tillNext = 10
+//array of possible games
+const games=["timedstop"];
 
-browser.notifications.create({
-  type: "basic",
-  iconUrl: browser.runtime.getURL("icon.png"),
-  title: "NEW TASK",
-  message: "Open Quick-Time Browser Sidebar."
-});
-
+//define timer and game variables in storage
+browser.storage.local.get(["timer","game"], (tim) => {
+    browser.storage.local.set({
+        timer:0,
+        game:""
+    })
+})
 
 browser.alarms.create("gameTimer", {
-    periodInMinutes:1/1000
+    periodInMinutes: 1/600
 })
+
 
 //timer ticker
 browser.alarms.onAlarm.addListener((alarm)=> {
     if(alarm.name === "gameTimer"){
         browser.storage.local.get(["timer"], (tim) => {
             let timer;
+
             //if timer is at next game
             if(tim.timer===tillNext){
-                timer=0;
+                console.log("EQUAL");
 
                 //if sidebar is not open, send notification to open it on click.
                 browser.sidebarAction.isOpen({}).then((result) => {
                     if(!result){
-                        console.log("notify");
-                        
-                    }
+                        browser.notifications.create({
+                            type: "basic",
+                            iconUrl: browser.runtime.getURL("icons/icon.png"),
+                            title: "NEW TASK",
+                            message: "Open Quick-Time Browser sidebar."
+                            });
+                        }
                 });
 
-
                 playRandom();
+                timer=0;
 
-                //next wait
-                tillNext = Math.floor(Math.random()*300)+30-1;
+
+                tillNext = 10*(Math.floor(Math.random()*270)+30);
             } else {
                 timer=tim.timer+1;
-
             }
+            browser.storage.local.set({
+                timer,
+            })
 
-            console.log(tim.timer + " "+ tillNext);
-                browser.storage.local.set({
-                    timer, 
-                })
-
-
+            console.log(tim.timer+" -> "+tillNext);
         })
     }
 })
 
-//start timer at 0
-browser.storage.local.get(["timer"], (tim) => {
-    browser.storage.local.set({
-        timer:0
-    })
-})
-
-
+//pick random game (currenty not random)
 function playRandom(){
-    let games=["timedstop"];
+    timer=0;
+
+    browser.storage.local.get(["timer", "game"], (tim) => {
+        browser.storage.local.set({
+            timer:0,
+            game:"timedstop"
+        })
+    })
 }
