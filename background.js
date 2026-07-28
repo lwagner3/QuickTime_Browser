@@ -60,10 +60,12 @@ browser.alarms.onAlarm.addListener((alarm)=> {
 function playRandom(){
     timer=0;
 
+    let game=games[Math.floor(Math.random() * games.length)];
+
     browser.storage.local.get(["timer", "game"], (tim) => {
         browser.storage.local.set({
             timer:0,
-            game:games[Math.floor(Math.random() * games.length)]
+            game:game
         })
     })
 }

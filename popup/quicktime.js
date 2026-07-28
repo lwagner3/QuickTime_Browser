@@ -63,7 +63,7 @@ function update() {
     //draw pemdas minigame when active
     if (game === "pemdas") {
         browser.storage.local.get(["timer", "game"], (tim) => {
-            if (time >= 70) { // time/10 second minigame timer
+            if (time >= 100) { // time/10 second minigame timer
                 let removing = browser.windows.remove(browser.windows.WINDOW_ID_CURRENT);
             }
         })
@@ -108,7 +108,7 @@ document.getElementById("game").addEventListener("mousedown", checkAnswer);
 function timedStopper() {
     if (game === "timedstop") {
             if ((335 <= pos && 390 >= pos)) {
-                // reset();
+                reset();
             } else {
                 let removing = browser.windows.remove(browser.windows.WINDOW_ID_CURRENT);
             }
