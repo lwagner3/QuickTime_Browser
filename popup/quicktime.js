@@ -17,6 +17,10 @@ let mathInfo;
 let answ;
 let shuffled;
 
+//aimlabs vars
+let targetLocs;
+let hits=0;
+
 
 requestAnimationFrame(update);
 function update() {
@@ -38,7 +42,7 @@ function update() {
             if (time >= 30) { // time/10 second minigame timer
                 let removing = browser.windows.remove(browser.windows.WINDOW_ID_CURRENT);
             }
-        })
+        });
 
         if (pos < 87 || pos > 612) {
             speed *= -1;
@@ -59,14 +63,13 @@ function update() {
         ctx.fillText(3 - (Math.floor(time / 10)) % 3, 140, 60);
     }
 
-
     //draw pemdas minigame when active
     if (game === "pemdas") {
         browser.storage.local.get(["timer", "game"], (tim) => {
             if (time >= 100) { // time/10 second minigame timer
                 let removing = browser.windows.remove(browser.windows.WINDOW_ID_CURRENT);
             }
-        })
+        });
 
         //create equation and answers
         if (mathInfo === undefined) {
@@ -98,11 +101,52 @@ function update() {
         ctx.fillStyle = "#b91414";
         ctx.fillText(7 - (Math.floor(time / 10)) % 7, 140, 60);
     }
+
+    //draw aimlabs minigame when active
+    if (game==="aimlabs"){
+        browser.storage.local.get(["timer", "game"], (tim) => {
+            if (time >= 50) { // time/10 second minigame timer
+                let removing = browser.windows.remove(browser.windows.WINDOW_ID_CURRENT);
+            }
+        });
+
+        //end condition
+        if(hits===6){
+            hits=0;
+            reset();
+        }
+
+        //timer
+        ctx.font = "50px Arial";
+        ctx.fillStyle = "#b91414";
+        ctx.fillText(5 - (Math.floor(time / 10)) % 5, 140, 60);
+
+        //score counter
+        ctx.font = "25px Arial";
+        ctx.fillStyle = "white";
+        ctx.fillText(hits,147, 100);
+
+        //make targets
+        if(targetLocs===undefined){
+            targetLocs=generateTargets(6);
+        }
+
+        //draw targets
+        for(let i=0;i<targetLocs.length;i++){
+            let x=targetLocs[i][0];
+            let y=targetLocs[i][1];
+            ctx.beginPath();
+            ctx.arc(x, y, 15, 0, 2 * Math.PI);
+            ctx.fillStyle = "#b91414";
+            ctx.fill();
+        }
+    }
 }
 
-//redundant, checks game again in functions
+//redundant, checks game in functions
 document.getElementById("game").addEventListener("mousedown", timedStopper);
 document.getElementById("game").addEventListener("mousedown", checkAnswer);
+document.getElementById("game").addEventListener("mousedown", checkTarget);
 
 //function for timed stop minigame, end condition check
 function timedStopper() {
@@ -159,6 +203,21 @@ function checkAnswer() {
     }
 }
 
+//check if target is clicked
+function checkTarget(){
+    if(game==="aimlabs"){
+        for(let i=0;i<targetLocs.length;i++){
+            let x=targetLocs[i][0]-20;
+            let y=targetLocs[i][1]+50;
+            if((mouseX>x&&mouseX<x+30)&&(mouseY>y&&mouseY<y+30)){
+                console.log("HIT!");
+                targetLocs[i]=[];
+                hits++;
+            }
+        }
+    }
+}
+
 //generate random math equation for pemdas, returns array with equation and 4 answer choices
 function generateMath() {
 
@@ -210,6 +269,17 @@ function generateMath() {
 
     //[formula,answer,wrong,wrong,wrong]
     return [formula, answ, answ + (Math.floor(Math.random() * 9) + 1), answ - (Math.floor(Math.random() * 8) + 1), last];
+}
+
+//generate aimlabs targets
+function generateTargets(n){
+    let targets=[];
+    for(i=0;i<n;i++){
+        let x=Math.floor(Math.random() * 250)+25;
+        let y=Math.floor(Math.random() * 200)+(i*60)+100;
+        targets.push([x,y]);
+    }
+    return targets;
 }
 
 //shuffle array
