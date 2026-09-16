@@ -2,7 +2,7 @@
 // let tillNext = 10*(Math.floor(Math.random()*270)+3);
 let tillNext = 10
 //array of possible games
-const games=["timedstop","pemdas","aimlabs"];
+const games=["timedstop","pemdas","aimlabs","strategem"];
 
 //define timer and game variables in storage
 browser.storage.local.get(["timer","game"], (tim) => {
@@ -65,7 +65,8 @@ function playRandom(){
     browser.storage.local.get(["timer", "game"], (tim) => {
         browser.storage.local.set({
             timer:0,
-            game:game
+            // game:game
+            game:"strategem"
         })
     })
 }

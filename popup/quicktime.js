@@ -21,6 +21,10 @@ let shuffled;
 let targetLocs;
 let hits=0;
 
+//strategem
+let strat;
+
+
 
 requestAnimationFrame(update);
 function update() {
@@ -140,6 +144,57 @@ function update() {
             ctx.fillStyle = "#b91414";
             ctx.fill();
         }
+    }
+
+    if(game==="strategem"){
+        browser.storage.local.get(["timer", "game"], (tim) => {
+            if (time >= 50) { // time/10 second minigame timer
+                // let removing = browser.windows.remove(browser.windows.WINDOW_ID_CURRENT);
+            }
+        });
+
+        if(hits===6){
+            hits=0;
+            reset();
+        }
+
+        //make targets
+        if(strat===undefined){
+            strat=generateStrategem(5);
+        }
+
+
+        //timer
+        ctx.font = "50px Arial";
+        ctx.fillStyle = "#b91414";
+        ctx.fillText(5 - (Math.floor(time / 10)) % 5, 140, 60);
+
+        //arrow boxes
+        ctx.fillRect(115, 115, 70, 60);
+        ctx.fillRect(115, 185, 70, 60);
+        ctx.fillRect(35, 185, 70, 60);
+        ctx.fillRect(195, 185, 70, 60);
+
+        //arrow text
+        ctx.fillStyle = "white";
+        ctx.font = "40px Arial";
+        ctx.fillText("↑", 145, 155);
+        ctx.fillText("↓", 145, 225);
+        ctx.fillText("→", 210, 225);
+        ctx.fillText("←", 50, 225);
+
+        //strategem text
+        let stratText="";
+        for(let i =0;i<5;i++){
+
+            //numbers not symbols
+
+            stratText+=strat[i];
+            console.log(i);
+        }
+        ctx.fillText(stratText,20,60);
+
+        
     }
 }
 
@@ -280,6 +335,14 @@ function generateTargets(n){
         targets.push([x,y]);
     }
     return targets;
+}
+
+function generateStrategem(n){
+    let stratInputs=[];
+    for(i=0;i<n;i++){
+        stratInputs.push(Math.random() * 3);
+    }
+    return stratInputs;
 }
 
 //shuffle array
