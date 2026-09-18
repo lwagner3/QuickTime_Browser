@@ -23,6 +23,7 @@ let hits=0;
 
 //strategem
 let strat;
+let stratDisplay;
 
 
 
@@ -178,8 +179,8 @@ function update() {
         //arrow text
         ctx.fillStyle = "white";
         ctx.font = "40px Arial";
-        ctx.fillText("↑", 145, 155);
-        ctx.fillText("↓", 145, 225);
+        ctx.fillText("↑", 140, 155);
+        ctx.fillText("↓", 140, 225);
         ctx.fillText("→", 210, 225);
         ctx.fillText("←", 50, 225);
 
@@ -187,7 +188,20 @@ function update() {
         let stratText="";
         for(let i =0;i<5;i++){
 
-            //numbers not symbols
+            switch(strat[i]) {
+                case 0:
+                    stratDisplay="↑";
+                    break;
+                case 1:
+                    stratDisplay="↓";
+                    break;
+                case 2:
+                    stratDisplay="→";
+                    break;
+                case 3:
+                    stratDisplay="←";
+                    break;
+            } 
 
             stratText+=strat[i];
             console.log(i);
@@ -337,6 +351,7 @@ function generateTargets(n){
     return targets;
 }
 
+//generate strategem code
 function generateStrategem(n){
     let stratInputs=[];
     for(i=0;i<n;i++){
