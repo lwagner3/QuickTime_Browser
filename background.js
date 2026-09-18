@@ -25,7 +25,7 @@ browser.alarms.onAlarm.addListener((alarm)=> {
 
             //if timer is at next game
             if(tim.timer===tillNext){
-                console.log("EQUAL");
+                // console.log("EQUAL");
 
                 //if sidebar is not open, send notification to open it on click.
                 browser.sidebarAction.isOpen({}).then((result) => {
@@ -66,7 +66,7 @@ function playRandom(){
         browser.storage.local.set({
             timer:0,
             // game:game
-            game:"strategem"
+            game:game
         })
     })
 }

@@ -21,9 +21,12 @@ let shuffled;
 let targetLocs;
 let hits=0;
 
-//strategem
+//strategem vars
 let strat;
-let stratDisplay;
+let stratDisplay=[];
+let stratText="";
+let stratTextDone="";
+let stratHits=0;
 
 
 
@@ -147,68 +150,65 @@ function update() {
         }
     }
 
+    //draw strategem minigame when active
     if(game==="strategem"){
         browser.storage.local.get(["timer", "game"], (tim) => {
-            if (time >= 50) { // time/10 second minigame timer
-                // let removing = browser.windows.remove(browser.windows.WINDOW_ID_CURRENT);
+            if (time >= 40) { // time/10 second minigame timer
+                let removing = browser.windows.remove(browser.windows.WINDOW_ID_CURRENT);
             }
         });
 
-        if(hits===6){
+        //end condition
+        if(stratHits===5){
             hits=0;
             reset();
         }
 
-        //make targets
+        //make strategem combination
         if(strat===undefined){
             strat=generateStrategem(5);
+            for(let i =0;i<5;i++){
+                switch(strat[i]) {
+                    case 0:
+                        stratDisplay[i]="↑";
+                        break;
+                    case 1:
+                        stratDisplay[i]="↓";
+                        break;
+                    case 2:
+                        stratDisplay[i]="→";
+                        break;
+                    case 3:
+                        stratDisplay[i]="←";
+                        break;
+                }
+                stratText+=stratDisplay[i]+" ";
+            }  
         }
-
-
+        
         //timer
         ctx.font = "50px Arial";
         ctx.fillStyle = "#b91414";
-        ctx.fillText(5 - (Math.floor(time / 10)) % 5, 140, 60);
+        ctx.fillText(4 - (Math.floor(time / 10)) % 4, 140, 60);
 
         //arrow boxes
-        ctx.fillRect(115, 115, 70, 60);
-        ctx.fillRect(115, 185, 70, 60);
-        ctx.fillRect(35, 185, 70, 60);
-        ctx.fillRect(195, 185, 70, 60);
+        ctx.fillRect(115, 165, 70, 60);
+        ctx.fillRect(115, 235, 70, 60);
+        ctx.fillRect(35, 200, 70, 60);
+        ctx.fillRect(195, 200, 70, 60);
 
         //arrow text
         ctx.fillStyle = "white";
         ctx.font = "40px Arial";
-        ctx.fillText("↑", 140, 155);
-        ctx.fillText("↓", 140, 225);
-        ctx.fillText("→", 210, 225);
-        ctx.fillText("←", 50, 225);
+        ctx.fillText("↑", 140, 205);
+        ctx.fillText("↓", 140, 275);
+        ctx.fillText("→", 210, 242);
+        ctx.fillText("←", 50, 242);
 
-        //strategem text
-        let stratText="";
-        for(let i =0;i<5;i++){
-
-            switch(strat[i]) {
-                case 0:
-                    stratDisplay="↑";
-                    break;
-                case 1:
-                    stratDisplay="↓";
-                    break;
-                case 2:
-                    stratDisplay="→";
-                    break;
-                case 3:
-                    stratDisplay="←";
-                    break;
-            } 
-
-            stratText+=strat[i];
-            console.log(i);
-        }
-        ctx.fillText(stratText,20,60);
-
-        
+        //arrow text completed
+        ctx.fillText(stratText,30,120);
+        ctx.fillStyle = "#b91414";
+        ctx.fillText(stratTextDone,30,120);
     }
 }
 
@@ -216,6 +216,8 @@ function update() {
 document.getElementById("game").addEventListener("mousedown", timedStopper);
 document.getElementById("game").addEventListener("mousedown", checkAnswer);
 document.getElementById("game").addEventListener("mousedown", checkTarget);
+document.getElementById("game").addEventListener("mousedown", checkStrategem);
+
 
 //function for timed stop minigame, end condition check
 function timedStopper() {
@@ -233,7 +235,7 @@ function checkAnswer() {
     updateClick();
     if (game === "pemdas") {
         
-            if (mouseX > 50 && mouseX < 150 && mouseY > 220 && mouseY < 300) {
+            if (mouseX >= 50 && mouseX <= 150 && mouseY >= 225 && mouseY <= 300) {
                 if (shuffled[0] === answ) {
                     reset();
                 } else {
@@ -242,7 +244,7 @@ function checkAnswer() {
                 console.log("ONE");
             }
             
-            else if (mouseX > 175 && mouseX < 275 && mouseY > 220 && mouseY < 300) {
+            else if (mouseX >= 175 && mouseX <= 275 && mouseY >= 225 && mouseY <= 300) {
                 if (shuffled[1] === answ) {
                     reset();
                 } else {
@@ -251,7 +253,7 @@ function checkAnswer() {
                 console.log("TWO");
             }
             
-            else if (mouseX > 50 && mouseX < 150 && mouseY > 320 && mouseY < 400) {
+            else if (mouseX >= 50 && mouseX <= 150 && mouseY >= 325 && mouseY <= 405) {
                 if (shuffled[2] === answ) {
                     reset();
                 } else {
@@ -260,7 +262,7 @@ function checkAnswer() {
                 console.log("THREE");
             }
             
-            else if (mouseX > 175 && mouseX < 275 && mouseY > 320 && mouseY < 400) {
+            else if (mouseX >= 175 && mouseX <= 275 && mouseY >= 325 && mouseY <= 405) {
                 if (shuffled[3] === answ) {
                     reset();
                 } else {
@@ -272,14 +274,61 @@ function checkAnswer() {
     }
 }
 
+//check if strategem arrow is clicked and correct
+function checkStrategem(){
+    if(game==="strategem"){
+        if (mouseX >= 115 && mouseX < 185 && mouseY > 225 && mouseY < 290) {
+            console.log("UP");
+            if(strat[0]===0){
+                strat.shift();
+                stratTextDone+="↑ ";
+                stratHits++;
+            } else {
+                let removing = browser.windows.remove(browser.windows.WINDOW_ID_CURRENT);
+            }
+        }
+        else if (mouseX >= 115 && mouseX <= 185 && mouseY >= 220 && mouseY <= 360) {
+            console.log("DOWN");
+            if(strat[0]===1){
+                strat.shift();
+                stratTextDone+="↓ ";
+                stratHits++;
+            } else {
+                let removing = browser.windows.remove(browser.windows.WINDOW_ID_CURRENT);
+            }
+        }
+        else if (mouseX >= 185 && mouseX <= 265 && mouseY >= 265 && mouseY <= 325) {
+            console.log("RIGHT");
+            if(strat[0]===2){
+                strat.shift();
+                stratTextDone+="→ ";
+                stratHits++;
+            } else {
+                let removing = browser.windows.remove(browser.windows.WINDOW_ID_CURRENT);
+            }
+        }
+        else if (mouseX >= 35 && mouseX <= 105 && mouseY >= 265 && mouseY <= 325) {
+            console.log("LEFT");
+            if(strat[0]===3){
+                strat.shift();
+                stratTextDone+="← ";
+                stratHits++;
+            } else {
+                let removing = browser.windows.remove(browser.windows.WINDOW_ID_CURRENT);
+            }
+        }
+    }
+}
+
 //check if target is clicked
 function checkTarget(){
     if(game==="aimlabs"){
         for(let i=0;i<targetLocs.length;i++){
-            let x=targetLocs[i][0]-20;
-            let y=targetLocs[i][1]+50;
-            if((mouseX>x&&mouseX<x+30)&&(mouseY>y&&mouseY<y+30)){
+            let x=targetLocs[i][0]-15;
+            let y=targetLocs[i][1]+45;
+            if((mouseX>x&&mouseX<x+35)&&(mouseY>y&&mouseY<y+35)){
                 console.log("HIT!");
+                console.log(targetLocs[i]);
                 targetLocs[i]=[];
                 hits++;
             }
@@ -355,7 +404,7 @@ function generateTargets(n){
 function generateStrategem(n){
     let stratInputs=[];
     for(i=0;i<n;i++){
-        stratInputs.push(Math.random() * 3);
+        stratInputs.push(Math.floor(Math.random() * 4));
     }
     return stratInputs;
 }
