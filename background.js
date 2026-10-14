@@ -1,8 +1,8 @@
 //rand(30-300) * 10
 // let tillNext = 10*(Math.floor(Math.random()*270)+3);
-let tillNext = 10
+let tillNext = 10;
 //array of possible games
-const games=["timedstop","pemdas","aimlabs","strategem"];
+const games=["timedstop","pemdas","aimlabs","stratagem","search"];
 
 //define timer and game variables in storage
 browser.storage.local.get(["timer","game"], (tim) => {
@@ -43,7 +43,8 @@ browser.alarms.onAlarm.addListener((alarm)=> {
                 timer=0;
 
 
-                tillNext = 10*(Math.floor(Math.random()*270)+30);
+                // tillNext = 10*(Math.floor(Math.random()*270)+30);
+                tillNext = 100;
             } else {
                 timer=tim.timer+1;
             }
@@ -51,7 +52,7 @@ browser.alarms.onAlarm.addListener((alarm)=> {
                 timer,
             })
 
-            console.log(tim.timer+" -> "+tillNext);
+            // console.log(tim.timer+" -> "+tillNext);
         })
     }
 })
@@ -65,8 +66,8 @@ function playRandom(){
     browser.storage.local.get(["timer", "game"], (tim) => {
         browser.storage.local.set({
             timer:0,
-            // game:game
             game:game
+            // game:'search'
         })
     })
 }

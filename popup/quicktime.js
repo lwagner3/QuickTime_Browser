@@ -21,12 +21,16 @@ let shuffled;
 let targetLocs;
 let hits=0;
 
-//strategem vars
+//stratagem vars
 let strat;
 let stratDisplay=[];
 let stratText="";
 let stratTextDone="";
 let stratHits=0;
+
+//aimlabs vars
+let searchLoc;
+let searched=0;
 
 
 
@@ -120,8 +124,9 @@ function update() {
 
         //end condition
         if(hits===6){
-            hits=0;
             reset();
+            hits=0;
+            targetLocs=undefined;
         }
 
         //timer
@@ -150,8 +155,8 @@ function update() {
         }
     }
 
-    //draw strategem minigame when active
-    if(game==="strategem"){
+    //draw stratagem minigame when active
+    if(game==="stratagem"){
         browser.storage.local.get(["timer", "game"], (tim) => {
             if (time >= 40) { // time/10 second minigame timer
                 let removing = browser.windows.remove(browser.windows.WINDOW_ID_CURRENT);
@@ -160,13 +165,18 @@ function update() {
 
         //end condition
         if(stratHits===5){
-            hits=0;
             reset();
+            strat=undefined;
+            stratDisplay=[];
+            stratText="";
+            stratTextDone="";
+            stratHits=0;
+            hits=0;
         }
 
-        //make strategem combination
+        //make stratagem combination
         if(strat===undefined){
-            strat=generateStrategem(5);
+            strat=generateStratagem(5);
             for(let i =0;i<5;i++){
                 switch(strat[i]) {
                     case 0:
@@ -210,13 +220,52 @@ function update() {
         ctx.fillStyle = "#b91414";
         ctx.fillText(stratTextDone,30,120);
     }
+
+    if(game==="search"){
+        browser.storage.local.get(["timer", "game"], (tim) => {
+            if (time >= 50) { // time/10 second minigame timer
+                let removing = browser.windows.remove(browser.windows.WINDOW_ID_CURRENT);
+            }
+        });
+
+        //end condition
+        if(searched===1){
+            reset();
+            searched=0;
+            searchLoc=undefined;
+        }
+
+        //timer
+        ctx.font = "50px Arial";
+        ctx.fillStyle = "#b91414";
+        ctx.fillText(5 - (Math.floor(time / 10)) % 5, 140, 60);
+
+        //score counter
+        ctx.font = "35px Arial";
+        ctx.fillStyle = "white";
+        ctx.fillText("Search!",97, 105);
+
+        //make targets
+        if(searchLoc===undefined){
+            searchLoc=generateSearch();
+        }
+
+        //draw targets
+        let x=searchLoc[0];
+        let y=searchLoc[1];
+        ctx.beginPath();
+        ctx.arc(x, y, 40, 0, 2 * Math.PI);
+        ctx.fillStyle = "#1c1b25";
+        ctx.fill();
+    }
 }
 
 //redundant, checks game in functions
 document.getElementById("game").addEventListener("mousedown", timedStopper);
 document.getElementById("game").addEventListener("mousedown", checkAnswer);
 document.getElementById("game").addEventListener("mousedown", checkTarget);
-document.getElementById("game").addEventListener("mousedown", checkStrategem);
+document.getElementById("game").addEventListener("mousedown", checkStratagem);
+document.getElementById("game").addEventListener("mousedown", checkSearch);
 
 
 //function for timed stop minigame, end condition check
@@ -238,6 +287,7 @@ function checkAnswer() {
             if (mouseX >= 50 && mouseX <= 150 && mouseY >= 225 && mouseY <= 300) {
                 if (shuffled[0] === answ) {
                     reset();
+                    resetPemdas();
                 } else {
                     let removing = browser.windows.remove(browser.windows.WINDOW_ID_CURRENT);
                 }
@@ -247,6 +297,7 @@ function checkAnswer() {
             else if (mouseX >= 175 && mouseX <= 275 && mouseY >= 225 && mouseY <= 300) {
                 if (shuffled[1] === answ) {
                     reset();
+                    resetPemdas();
                 } else {
                     let removing = browser.windows.remove(browser.windows.WINDOW_ID_CURRENT);
                 }
@@ -256,6 +307,7 @@ function checkAnswer() {
             else if (mouseX >= 50 && mouseX <= 150 && mouseY >= 325 && mouseY <= 405) {
                 if (shuffled[2] === answ) {
                     reset();
+                    resetPemdas();
                 } else {
                     let removing = browser.windows.remove(browser.windows.WINDOW_ID_CURRENT);
                 }
@@ -265,6 +317,7 @@ function checkAnswer() {
             else if (mouseX >= 175 && mouseX <= 275 && mouseY >= 325 && mouseY <= 405) {
                 if (shuffled[3] === answ) {
                     reset();
+                    resetPemdas();
                 } else {
                     let removing = browser.windows.remove(browser.windows.WINDOW_ID_CURRENT);
 
@@ -274,9 +327,9 @@ function checkAnswer() {
     }
 }
 
-//check if strategem arrow is clicked and correct
-function checkStrategem(){
-    if(game==="strategem"){
+//check if stratagem arrow is clicked and correct
+function checkStratagem(){
+    if(game==="stratagem"){
         if (mouseX >= 115 && mouseX < 185 && mouseY > 225 && mouseY < 290) {
             console.log("UP");
             if(strat[0]===0){
@@ -334,6 +387,18 @@ function checkTarget(){
             }
         }
     }
+}
+
+//check search clicks
+function checkSearch(){
+    if(game==="search"){
+        let x=searchLoc[0]-45;
+        let y=searchLoc[1]+20;
+        if((mouseX>x&&mouseX<x+85)&&(mouseY>y&&mouseY<+y+85)){
+            console.log("HIT!");
+            searched++;
+        }
+        }
 }
 
 //generate random math equation for pemdas, returns array with equation and 4 answer choices
@@ -400,8 +465,15 @@ function generateTargets(n){
     return targets;
 }
 
-//generate strategem code
-function generateStrategem(n){
+//generate search area
+function generateSearch(){
+    let x=Math.floor(Math.random() * 200)+40;
+    let y=Math.floor(Math.random() * 200)+(200)+100;
+    return [x,y];
+}
+
+//generate stratagem code
+function generateStratagem(n){
     let stratInputs=[];
     for(i=0;i<n;i++){
         stratInputs.push(Math.floor(Math.random() * 4));
@@ -433,4 +505,10 @@ function reset(){
             timer: 0,
         });
     })
+}
+
+function resetPemdas(){
+    mathInfo=undefined;
+    answ=undefined;
+    shuffled=undefined;
 }
