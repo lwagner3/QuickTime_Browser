@@ -1,12 +1,12 @@
 {
   "manifest_version": 2,
-  "name": "QuickTime Browser",
+  "name": "Quick-Time Browser",
   "version": "1.0",
 
   "description": "Keeps you focoused.",
 
   "icons": {
-    "48": "icons/icon.png"
+    "512": "icons/icon.png"
   },
 
   "browser_specific_settings": {
